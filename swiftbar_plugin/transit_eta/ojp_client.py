@@ -23,7 +23,14 @@ from typing import Any, Dict, List, Optional
 
 from .models import StopEvent
 from .xml_util import parse, Node
-from .ojp_http import OJP_ENDPOINT, REQUEST_TIMEOUT_SECONDS, OjpError, auth_headers, iso_now
+from .ojp_http import (
+    OJP_ENDPOINT,
+    REQUEST_TIMEOUT_SECONDS,
+    OjpError,
+    auth_headers,
+    error_from_http_error,
+    iso_now,
+)
 
 
 def build_stop_event_request(stop_ref: str, number_of_results: int) -> bytes:
@@ -147,7 +154,7 @@ def next_departures(cfg: Dict[str, Any], limit: int = 5) -> List[StopEvent]:
         with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as resp:
             payload = resp.read()
     except urllib.error.HTTPError as exc:
-        raise OjpError(f"HTTP {exc.code} from OJP API: {exc.reason}") from exc
+        raise error_from_http_error(exc) from exc
     except urllib.error.URLError as exc:
         raise OjpError(f"Could not reach OJP API: {exc.reason}") from exc
 

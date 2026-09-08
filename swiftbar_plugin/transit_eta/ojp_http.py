@@ -8,6 +8,7 @@ docs -- their gateway 403s requests with no User-Agent set, which is
 Python's urllib default.
 """
 
+import urllib.error
 from datetime import datetime, timezone
 from typing import Dict
 
@@ -29,6 +30,18 @@ def auth_headers(api_key: str) -> Dict[str, str]:
 
 def iso_now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def error_from_http_error(exc: "urllib.error.HTTPError") -> OjpError:
+    # exc.reason is just the status phrase (e.g. "Forbidden"); the body
+    # usually carries the actual reason (invalid/expired key, not
+    # subscribed to this product, quota exceeded, ...), so surface it.
+    try:
+        detail = exc.read().decode("utf-8", errors="replace").strip()
+    except Exception:
+        detail = ""
+    detail = detail[:300] if detail else exc.reason
+    return OjpError(f"HTTP {exc.code} from OJP API: {detail}")
 
 
 def xml_escape(text: str) -> str:

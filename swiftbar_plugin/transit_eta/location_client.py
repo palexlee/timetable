@@ -17,6 +17,7 @@ from .ojp_http import (
     REQUEST_TIMEOUT_SECONDS,
     OjpError,
     auth_headers,
+    error_from_http_error,
     iso_now,
     xml_escape,
 )
@@ -102,7 +103,7 @@ def search_stops(cfg: Dict[str, Any], query: str, limit: int = 8) -> List[StopMa
         with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as resp:
             payload = resp.read()
     except urllib.error.HTTPError as exc:
-        raise OjpError(f"HTTP {exc.code} from OJP API: {exc.reason}") from exc
+        raise error_from_http_error(exc) from exc
     except urllib.error.URLError as exc:
         raise OjpError(f"Could not reach OJP API: {exc.reason}") from exc
 
