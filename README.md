@@ -27,12 +27,21 @@ swiftbar_plugin/
     config.py              # reads/writes ~/.config/transit-eta/config.json
     render.py              # builds the menu bar text SwiftBar displays
 tests/                    # stdlib unittest, run with ./run_tests.sh
-install.sh                # copies swiftbar_plugin/ into SwiftBar's plugin folder
+install.sh                # deploys the plugin (see note below on where things land)
 ```
 
 Everything is stdlib-only Python (`urllib`, `xml.etree`, `json`) — no `pip
 install` needed, which also means it runs on whatever `python3` macOS
 already ships.
+
+**Where install.sh actually puts things, and why:** SwiftBar scans its
+whole Plugins folder (including subfolders) and tries to run *every* file
+it finds as its own plugin. If `transit_eta/` were copied straight into
+that folder, SwiftBar would also try to "run" each of its modules and fail
+loudly on every one. So `install.sh` copies `transit_eta/` to a sibling
+`TransitEtaLib` folder next to Plugins (never scanned) and rewrites
+`transit-eta.10s.py`'s `TRANSIT_ETA_LIB_DIR` to point at it — only that one
+script ends up inside the actual Plugins folder.
 
 ## ⚠️ Before you rely on this: verify the API details
 

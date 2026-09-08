@@ -10,16 +10,29 @@
 # Faster than ~10s is unlikely to be worth the extra API calls.
 """SwiftBar/xbar plugin entry point.
 
-All the actual logic lives in transit_eta/ next to this file so it can be
-unit tested (see ../tests) without SwiftBar or a network connection. This
-file only wires stdin/argv/stdout to that package.
+All the actual logic lives in the transit_eta/ package, importable so it
+can be unit tested (see ../tests) without SwiftBar or a network
+connection. This file only wires stdin/argv/stdout to that package.
+
+IMPORTANT: transit_eta/ must NOT be installed inside SwiftBar's Plugins
+folder alongside this file. SwiftBar scans that folder (recursively) and
+tries to run every file it finds as its own plugin, including the .py
+files inside a nested package -- which fails, since they're modules, not
+scripts. install.sh instead installs transit_eta/ to a sibling folder and
+rewrites TRANSIT_ETA_LIB_DIR below to point at it, so this is the only
+file that ends up inside the Plugins folder.
 """
 
 import os
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# install.sh rewrites this exact line (matched by its "= None" prefix, so
+# don't reformat it) to the absolute path it installed transit_eta/ to.
+TRANSIT_ETA_LIB_DIR = None  # set by install.sh
+if TRANSIT_ETA_LIB_DIR is None:
+    TRANSIT_ETA_LIB_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, TRANSIT_ETA_LIB_DIR)
 
 from transit_eta import config, location_client, ojp_client, render
 from transit_eta.ojp_http import OjpError
