@@ -16,7 +16,7 @@ from .ojp_http import (
     OJP_ENDPOINT,
     REQUEST_TIMEOUT_SECONDS,
     OjpError,
-    auth_header,
+    auth_headers,
     iso_now,
     xml_escape,
 )
@@ -93,7 +93,7 @@ def search_stops(cfg: Dict[str, Any], query: str, limit: int = 8) -> List[StopMa
         data=body,
         method="POST",
         headers={
-            **auth_header(api_key),
+            **auth_headers(api_key),
             "Content-Type": "application/xml",
             "Accept": "application/xml",
         },

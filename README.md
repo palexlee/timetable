@@ -46,16 +46,16 @@ script ends up inside the actual Plugins folder.
 ## ⚠️ Before you rely on this: verify the API details
 
 This was written in a sandboxed environment with **outbound network access
-to opentransportdata.swiss blocked**, so the exact endpoint URL, auth
-header, and response tag names in `ojp_client.py` / `location_client.py`
-/ `ojp_http.py` could not be checked against the live docs. They follow the
-published OJP 2.0 / VDV 431 standard opentransportdata.swiss documents, but
-please confirm the following against the portal once you have an account,
-and adjust if they've changed:
+to opentransportdata.swiss blocked**, so several details couldn't be
+checked against the live docs while writing the first version. The auth
+scheme is now confirmed straight from opentransportdata.swiss's own docs:
+`Authorization: Bearer <key>` plus a non-empty `User-Agent` header (their
+gateway 403s requests with no `User-Agent`, which is what Python's
+`urllib` sends by default -- `auth_headers()` in `ojp_http.py` now sets
+both). Still worth confirming against the portal once you have an
+account, and adjusting if they've changed:
 
 - `OJP_ENDPOINT` in `swiftbar_plugin/transit_eta/ojp_http.py`
-- The auth header format in `auth_header()` (currently `Authorization:
-  Bearer <key>`) in the same file
 - The response tag names in `_parse_stop_event()` (ojp_client.py) and
   `_parse_place_result()` (location_client.py), if a live request comes
   back with different tags than expected

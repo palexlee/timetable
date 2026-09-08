@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional
 
 from .models import StopEvent
 from .xml_util import parse, Node
-from .ojp_http import OJP_ENDPOINT, REQUEST_TIMEOUT_SECONDS, OjpError, auth_header, iso_now
+from .ojp_http import OJP_ENDPOINT, REQUEST_TIMEOUT_SECONDS, OjpError, auth_headers, iso_now
 
 
 def build_stop_event_request(stop_ref: str, number_of_results: int) -> bytes:
@@ -138,7 +138,7 @@ def next_departures(cfg: Dict[str, Any], limit: int = 5) -> List[StopEvent]:
         data=body,
         method="POST",
         headers={
-            **auth_header(api_key),
+            **auth_headers(api_key),
             "Content-Type": "application/xml",
             "Accept": "application/xml",
         },
