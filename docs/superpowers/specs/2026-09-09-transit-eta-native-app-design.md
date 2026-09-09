@@ -1,6 +1,6 @@
 # Transit ETA: native SwiftUI menu bar app
 
-Status: approved (architecture) — visual design in progress
+Status: approved (architecture + visual design)
 Date: 2026-09-09
 
 ## Why
@@ -129,6 +129,43 @@ the `StopPlaceRef`/`PublicCode` bugs the Python version had). Covers: XML
 parsing for both request types, `matches_pin`'s Unicode normalization,
 title/ETA formatting, and the non-XML-body error path.
 
+## Visual design
+
+Mockups approved: https://claude.ai/code/artifact/9f6de602-b55a-4be6-b70c-7e3bb316bbbc
+(4 screens: departures list, departures list with a line pinned, stop search,
+API key entry.)
+
+Design tokens established there, to carry into the SwiftUI implementation:
+
+- **Colors**: SBB brand red `#EB0000` (line badges, delay text, pinned-row
+  tint `#FDECEC`, primary button fill); ink `#1A1A1A` (primary text); muted
+  ink `#8A8A8A` (secondary text, section labels); dividers `#E7E7E7`/`#EFEFEF`;
+  field backgrounds `#F2F2F2`.
+- **Typography**: Helvetica Neue (fallback Helvetica, Arial, sans-serif).
+  Section labels are 10px, uppercase, 0.08em tracking, bold, muted ink —
+  used as a Swiss-board-style "NEXT DEPARTURES" header rather than a plain
+  list title.
+- **Layout**: 320-360pt-wide popover card, 10pt corner radius, one drop
+  shadow (`0 12px 28px rgba(0,0,0,.16)` at mockup scale) — no gradients, no
+  left-border-accent cards. Each departure row: mode icon (24pt) · line name
+  (bold) → destination (regular, truncates) on one line, platform + scheduled
+  time (secondary, small) on a second line, ETA (bold, large) right-aligned
+  with a red delay tag underneath when late.
+- **Pinned state**: a full-row background tint (`#FDECEC`), not a border
+  accent, plus a trailing red checkmark (`circle-tick`) icon — reads as a
+  native list selection, not a decorative card.
+- **Icons**: real SVGs from `sbb-design-systems/sbb-icons` (Apache-2.0),
+  recolored via `currentColor` for tinting: `train-profile`, `tram-profile`,
+  `bus-profile`, `underground-vehicule-profile`, `boat-profile`,
+  `cable-car-profile`, `funicular-profile` for transport modes;
+  `station-small` for the generic stop glyph; `magnifying-glass-small` for
+  search; `key-small` for the API key field; `circle-tick-small` /
+  `circle-cross-small` for pinned/unpin; `chevron-left-small` for back
+  navigation; `platform-small` for the platform indicator. No icon exists in
+  the set for "refresh" — the mockups use a small custom circular-arrow
+  glyph in the same flat, filled style; port that same custom vector rather
+  than searching for a nonexistent SBB one.
+
 ## Icons
 
 SVGs pulled from `sbb-design-systems/sbb-icons`, one per OJP transport mode,
@@ -150,7 +187,3 @@ imported into the asset catalog as template (tintable) images:
   README "next steps" items — explicitly deferred; this is a reskin, not a
   feature expansion.
 - Notarized/distributable signing — ad-hoc only, for personal use.
-- Visual design details (exact colors, spacing, typography, layout of each
-  view) — being worked out as mockups via the `design` skill before the
-  implementation plan is written; this document covers architecture, not
-  pixel-level UI.
