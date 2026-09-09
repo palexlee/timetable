@@ -80,6 +80,28 @@
             </Service>
           </StopEvent>
         </StopEventResult>
+        <StopEventResult>
+          <StopEvent>
+            <ThisCall>
+              <CallAtStop>
+                <StopPointRef>8507000</StopPointRef>
+                <ServiceDeparture>
+                  <TimetabledTime>2026-09-08T12:18:00Z</TimetabledTime>
+                </ServiceDeparture>
+              </CallAtStop>
+            </ThisCall>
+            <Service>
+              <!-- Real OJP responses send PublicCode, not PublishedLineName. -->
+              <Mode>
+                <PtMode>rail</PtMode>
+              </Mode>
+              <PublicCode>IR</PublicCode>
+              <DestinationText>
+                <Text>Zürich Flughafen</Text>
+              </DestinationText>
+            </Service>
+          </StopEvent>
+        </StopEventResult>
       </OJPStopEventDelivery>
     </siri:ServiceDelivery>
   </OJPResponse>
