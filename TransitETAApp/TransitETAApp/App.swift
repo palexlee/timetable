@@ -1,11 +1,16 @@
 import SwiftUI
 
 @main
-struct TransitETAApp: App {
+struct TransitETAMenuBarApp: App {
+    @StateObject private var model = AppModel()
+
     var body: some Scene {
-        MenuBarExtra("Transit ETA", systemImage: "tram.fill") {
-            Text("Transit ETA")
-                .padding()
+        MenuBarExtra {
+            DeparturesView(model: model)
+                .onAppear { model.startTimer() }
+        } label: {
+            MenuBarLabel(state: model.menuBarLabelState)
         }
+        .menuBarExtraStyle(.window)
     }
 }
