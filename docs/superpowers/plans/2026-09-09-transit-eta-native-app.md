@@ -1452,7 +1452,9 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `StopEvent`, `Pin`, `iconAssetName` (Task 4); `Config` (Task 7); `searchStops`, `nextDepartures` (Tasks 5–6); `OjpError` (Task 2).
-- Produces: `enum MenuBarState: Equatable { case noStop, unpinned(stopName: String), pinned(iconName:lineName:destination:etaText:delayText:), notRunning(iconName:lineName:destination:) }`, `func compactETA(_ minutes: Int) -> String`, `func menuBarState(pin:stopName:events:now:) -> MenuBarState`, `@MainActor final class AppModel: ObservableObject { @Published events: [StopEvent], @Published errorMessage: String?; var config: Config; var menuBarState: MenuBarState; func startTimer(interval:); func stopTimer(); func refresh() async; func search(_:) async throws -> [StopMatch]; func selectStop(_:) async; func pin(_:); func unpin(); func setAPIKey(_:) throws }`.
+- Produces: `enum MenuBarState: Equatable { case noStop, unpinned(stopName: String), pinned(iconName:lineName:destination:etaText:delayText:), notRunning(iconName:lineName:destination:) }`, `func compactETA(_ minutes: Int) -> String`, `func menuBarState(pin:stopName:events:now:) -> MenuBarState`, `@MainActor final class AppModel: ObservableObject { @Published events: [StopEvent], @Published errorMessage: String?; var config: Config; var menuBarLabelState: MenuBarState; func startTimer(interval:); func stopTimer(); func refresh() async; func search(_:) async throws -> [StopMatch]; func selectStop(_:) async; func pin(_:); func unpin(); func setAPIKey(_:) throws }`.
+
+Note the `AppModel` property is named `menuBarLabelState`, not `menuBarState` — it must not share a name with the free function `menuBarState(pin:stopName:events:now:)` it calls internally. Swift's unqualified name lookup inside a type's own member favors that type's own member over a module-scope function of the same name, even when the call uses labeled-argument syntax that only the free function accepts — so a same-named computed property calling the free function unqualified fails to compile (confirmed empirically, twice, during this plan's execution: first as a caught pre-flight defect misdiagnosed with an incorrect fix, then again when that incorrect fix itself failed during Task 8's implementation). Module-qualifying the call (`TransitETAApp.menuBarState(...)`) does not work around this either, since the app's `@main` struct is also named `TransitETAApp` at this point in the build (renamed only in Task 10) and shadows the module name for qualification purposes. Renaming the property is the zero-ripple fix: nothing yet depends on the old name (`AppModelTests.swift` tests `pin`/`unpin`/`refresh`, not this property by name).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1630,12 +1632,7 @@ final class AppModel: ObservableObject {
         self.config = config
     }
 
-    var menuBarState: MenuBarState {
-        // Unqualified call resolves to the free function, not this property:
-        // Swift distinguishes `model.menuBarState` (property access, no
-        // parens) from `menuBarState(pin:stopName:events:now:)` (a labeled
-        // function call) by call-site shape, so no module qualification
-        // or recursion risk here.
+    var menuBarLabelState: MenuBarState {
         menuBarState(pin: config.pinned, stopName: config.stopName, events: events, now: Date())
     }
 
@@ -1701,7 +1698,7 @@ final class AppModel: ObservableObject {
 }
 ```
 
-No module qualification is used for the `menuBarState(pin:stopName:events:now:)` call inside the `menuBarState` computed property — see the comment in the code above for why that's safe.
+The `AppModel` property is named `menuBarLabelState` (not `menuBarState`) precisely so it doesn't share a name with the free function it calls — see the note in Task 8's Interfaces section above for why that naming collision matters.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -2280,7 +2277,7 @@ struct TransitETAMenuBarApp: App {
             DeparturesView(model: model)
                 .onAppear { model.startTimer() }
         } label: {
-            MenuBarLabel(state: model.menuBarState)
+            MenuBarLabel(state: model.menuBarLabelState)
         }
         .menuBarExtraStyle(.window)
     }
