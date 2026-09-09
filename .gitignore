@@ -3,3 +3,8 @@ __pycache__/
 .pytest_cache/
 config.json
 .superpowers/
+
+# Xcode
+TransitETAApp/*.xcodeproj/xcuserdata/
+TransitETAApp/*.xcodeproj/project.xcworkspace/xcuserdata/
+TransitETAApp/DerivedData/
