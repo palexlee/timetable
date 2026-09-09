@@ -55,10 +55,13 @@ def title_for(cfg: Dict[str, Any], events: List[StopEvent], now: datetime) -> st
         # Pinned route isn't in the next N departures right now (e.g. big
         # gap between runs) -- show the icon with a dash rather than
         # silently falling back to a different line.
-        return f"{icon_for_mode(pin.get('mode'))} {pin.get('line_name', '?')} –"
+        icon = icon_for_mode(pin.get("mode"))
+        line_name = pin.get("line_name", "?")
+        destination = pin.get("destination", "?")
+        return f"{icon}{line_name} → {destination} –"
 
     eta = compact_eta(match.eta_minutes(now))
-    label = f"{match.icon}{match.line_name} {eta}"
+    label = f"{match.icon}{match.line_name} → {match.destination} {eta}"
     if match.is_delayed:
         label += f" (+{match.delay_minutes})"
     return label
