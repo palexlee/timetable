@@ -14,11 +14,11 @@
 		2B79E80CB38FD506371E356C /* LocationClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FADC2F271CCA9B318865DCB /* LocationClientTests.swift */; };
 		2F9ED20E0D8E7B5322CCB06F /* ModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A1F7542D4FC4B8F95D277B /* ModelsTests.swift */; };
 		346A29C5EE923EB8117F1AE9 /* RenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56E49EF6E07BEA7738C8833 /* RenderingTests.swift */; };
-		3A45F5F025A21E14D7A3706E /* PlaceholderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7271E27AE99474F5AB44EECE /* PlaceholderTests.swift */; };
 		3ED01472447068F38E94CEF8 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471A31B85190D0358D0786D3 /* KeychainStore.swift */; };
 		450389B5AA28A7956569A367 /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870C10675C678CF08B7A04AF /* MenuBarLabel.swift */; };
 		4B1C7C86010AB7A399B81180 /* APIKeyEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A51C8282E72A89675F594BE /* APIKeyEntryView.swift */; };
 		6248E124D3BE710B1ABF3D0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2D3A7449B8531086AF6CFF0 /* Assets.xcassets */; };
+		7B560D8D3AD085B47AABFDFC /* LICENSE-sbb-icons.txt in Resources */ = {isa = PBXBuildFile; fileRef = 21CF930D129E8CDF5960BADB /* LICENSE-sbb-icons.txt */; };
 		8077867D8D2B6E8605B56C60 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E21BCE13386017D7170510 /* AppModel.swift */; };
 		8DD36FF4F3FA5484D9742C20 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7885F8E6A01FEAD17CC2F5E /* Models.swift */; };
 		90203E8AE150139D3C03A404 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DAA9C3E755000FB08439EEE /* DesignTokens.swift */; };
@@ -49,6 +49,7 @@
 /* Begin PBXFileReference section */
 		0A81D29FAA7C6BB90797E402 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		170077B03BF104A8F8D15629 /* LocationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationClient.swift; sourceTree = "<group>"; };
+		21CF930D129E8CDF5960BADB /* LICENSE-sbb-icons.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LICENSE-sbb-icons.txt"; sourceTree = "<group>"; };
 		27A1F7542D4FC4B8F95D277B /* ModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsTests.swift; sourceTree = "<group>"; };
 		287BB64E1BFAA7DC19495F86 /* XMLTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLTree.swift; sourceTree = "<group>"; };
 		3A51C8282E72A89675F594BE /* APIKeyEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyEntryView.swift; sourceTree = "<group>"; };
@@ -59,7 +60,6 @@
 		5BECED20E7EA83F2D9A79B8D /* TransitETAAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransitETAAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6388F229F3A440DB100DF12F /* ConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigTests.swift; sourceTree = "<group>"; };
 		6409454883E77FB69BF69401 /* DeparturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeparturesView.swift; sourceTree = "<group>"; };
-		7271E27AE99474F5AB44EECE /* PlaceholderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTests.swift; sourceTree = "<group>"; };
 		8217593415B8F538D7374FDE /* OJPHTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OJPHTTP.swift; sourceTree = "<group>"; };
 		870C10675C678CF08B7A04AF /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
 		8DAA9C3E755000FB08439EEE /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
@@ -97,6 +97,7 @@
 				50A6108500E8E95051E6492A /* Config.swift */,
 				8DAA9C3E755000FB08439EEE /* DesignTokens.swift */,
 				471A31B85190D0358D0786D3 /* KeychainStore.swift */,
+				21CF930D129E8CDF5960BADB /* LICENSE-sbb-icons.txt */,
 				170077B03BF104A8F8D15629 /* LocationClient.swift */,
 				F7885F8E6A01FEAD17CC2F5E /* Models.swift */,
 				8217593415B8F538D7374FDE /* OJPHTTP.swift */,
@@ -116,7 +117,6 @@
 				4FADC2F271CCA9B318865DCB /* LocationClientTests.swift */,
 				27A1F7542D4FC4B8F95D277B /* ModelsTests.swift */,
 				F55CA243D23D8DABF93D15BC /* OJPHTTPTests.swift */,
-				7271E27AE99474F5AB44EECE /* PlaceholderTests.swift */,
 				D56E49EF6E07BEA7738C8833 /* RenderingTests.swift */,
 				94058FC79CD251CFB89AD638 /* StopEventClientTests.swift */,
 				B2EF08B6ED4D64B58E440FD9 /* XMLTreeTests.swift */,
@@ -231,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6248E124D3BE710B1ABF3D0E /* Assets.xcassets in Resources */,
+				7B560D8D3AD085B47AABFDFC /* LICENSE-sbb-icons.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,7 +256,6 @@
 				2B79E80CB38FD506371E356C /* LocationClientTests.swift in Sources */,
 				2F9ED20E0D8E7B5322CCB06F /* ModelsTests.swift in Sources */,
 				97E8086355A66AFF01188E5D /* OJPHTTPTests.swift in Sources */,
-				3A45F5F025A21E14D7A3706E /* PlaceholderTests.swift in Sources */,
 				346A29C5EE923EB8117F1AE9 /* RenderingTests.swift in Sources */,
 				E0C35EE333B8CCAF611BAE28 /* StopEventClientTests.swift in Sources */,
 				D117ABC7FE24AE72CEBC4D86 /* XMLTreeTests.swift in Sources */,

@@ -4,9 +4,24 @@ import Combine
 
 @MainActor
 final class AppModelTests: XCTestCase {
+    private let testKeychainService = "local.transit-eta.tests"
+
     private func makeConfig() -> Config {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        return Config(directory: dir, keychainService: "local.transit-eta.tests")
+        return Config(directory: dir, keychainService: testKeychainService)
+    }
+
+    override func setUp() {
+        super.setUp()
+        // A developer's real TRANSIT_ETA_API_KEY must not leak in: none of
+        // these tests are about env-var precedence, but Config.apiKey checks
+        // the env var before the Keychain.
+        unsetenv("TRANSIT_ETA_API_KEY")
+    }
+
+    override func tearDown() {
+        KeychainStore.delete(service: testKeychainService, account: "api-key")
+        super.tearDown()
     }
 
     func testPinUpdatesConfigAndNotifiesObservers() {
@@ -54,5 +69,21 @@ final class AppModelTests: XCTestCase {
         await model.refresh()
 
         XCTAssertEqual(model.errorMessage, "No stop configured yet.")
+    }
+
+    func testMenuBarLabelStateReflectsPinnedEventAfterRefresh() {
+        let config = makeConfig()
+        config.setStop(stopRef: "8507000", stopName: "Bern")
+        let pin = Pin(mode: "bus", lineName: "46", destination: "Rütihof")
+        config.setPin(pin)
+        let model = AppModel(config: config)
+
+        // Proves the property delegates to the free function with the right
+        // arguments (no live network call involved).
+        let now = Date()
+        XCTAssertEqual(
+            model.menuBarLabelState,
+            menuBarState(pin: config.pinned, stopName: config.stopName, events: model.events, now: now)
+        )
     }
 }

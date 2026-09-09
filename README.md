@@ -111,7 +111,13 @@ in Xcode and press Run. It's ad-hoc signed (no Apple Developer account
 needed) -- if Xcode asks for a signing team the first time you run it,
 choose "Sign to Run Locally".
 
-Run its test suite with `TransitETAApp/run_tests.sh`.
+Run its test suite with `TransitETAApp/run_tests.sh`. If `xcodebuild`/tests
+fail with a Command Line Tools error, ensure full Xcode is installed and set
+`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` (or open the
+project in Xcode directly, which doesn't need this). The suite writes a
+temporary entry to the login Keychain during `ConfigTests`/`AppModelTests`
+(service `local.transit-eta.tests`), cleaned up automatically by each test
+class's `tearDown`.
 
 This SwiftBar plugin isn't going away -- both can coexist, and the native
 app uses its own config file (`~/.config/transit-eta/native-config.json`,

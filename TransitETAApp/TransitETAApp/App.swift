@@ -7,7 +7,6 @@ struct TransitETAMenuBarApp: App {
     var body: some Scene {
         MenuBarExtra {
             DeparturesView(model: model)
-                .onAppear { model.startTimer() }
         } label: {
             MenuBarLabel(state: model.menuBarLabelState)
         }

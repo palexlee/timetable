@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DeparturesView: View {
@@ -49,7 +50,10 @@ struct DeparturesView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 8) {
-                Image("station").renderingMode(.template).foregroundColor(.inkPrimary)
+                Image("station").renderingMode(.template)
+                    .resizable().aspectRatio(contentMode: .fit)
+                    .foregroundColor(.inkPrimary)
+                    .frame(width: 22, height: 22)
                 Text(model.config.stopName ?? "Transit ETA")
                     .font(.sbb(16, weight: .bold))
                     .foregroundColor(.inkPrimary)
@@ -81,6 +85,10 @@ struct DeparturesView: View {
             FooterAction(iconName: "key", title: "Set API key…") {
                 showingAPIKey = true
             }
+            Divider().overlay(Color.dividerFaint)
+            FooterAction(iconName: "circle-cross", title: "Quit") {
+                NSApplication.shared.terminate(nil)
+            }
         }
     }
 }
@@ -97,6 +105,7 @@ private struct DepartureRow: View {
         Button(action: onSelect) {
             HStack(spacing: 12) {
                 Image(event.iconName).renderingMode(.template)
+                    .resizable().aspectRatio(contentMode: .fit)
                     .foregroundColor(.inkPrimary)
                     .frame(width: 24, height: 24)
                 VStack(alignment: .leading, spacing: 3) {
@@ -107,7 +116,9 @@ private struct DepartureRow: View {
                     }
                     HStack(spacing: 5) {
                         if let platform = event.platform {
-                            Image("platform").renderingMode(.template).foregroundColor(Color(white: 0.68))
+                            Image("platform").renderingMode(.template)
+                                .resizable().aspectRatio(contentMode: .fit)
+                                .foregroundColor(Color(white: 0.68))
                                 .frame(width: 13, height: 13)
                             Text("Gl. \(platform)").font(.sbb(12)).foregroundColor(.inkSecondary)
                             Text("·").font(.sbb(12)).foregroundColor(.inkSecondary)
@@ -123,7 +134,9 @@ private struct DepartureRow: View {
                     }
                 }
                 if isPinned {
-                    Image("circle-tick").renderingMode(.template).foregroundColor(.sbbRed)
+                    Image("circle-tick").renderingMode(.template)
+                        .resizable().aspectRatio(contentMode: .fit)
+                        .foregroundColor(.sbbRed)
                         .frame(width: 16, height: 16)
                 }
             }
@@ -145,7 +158,9 @@ private struct FooterAction: View {
         Button(action: action) {
             HStack(spacing: 10) {
                 Image(iconName).renderingMode(.template)
+                    .resizable().aspectRatio(contentMode: .fit)
                     .foregroundColor(destructive ? .sbbRed : Color(white: 0.29))
+                    .frame(width: 16, height: 16)
                 Text(title).font(.sbb(14))
                     .foregroundColor(destructive ? .sbbRed : .inkPrimary)
                 Spacer(minLength: 0)

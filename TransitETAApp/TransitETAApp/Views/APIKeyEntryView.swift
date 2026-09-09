@@ -10,7 +10,10 @@ struct APIKeyEntryView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 10) {
                 Button(action: { isPresented = false }) {
-                    Image("chevron-left").renderingMode(.template).foregroundColor(Color(white: 0.29))
+                    Image("chevron-left").renderingMode(.template)
+                        .resizable().aspectRatio(contentMode: .fit)
+                        .foregroundColor(Color(white: 0.29))
+                        .frame(width: 18, height: 18)
                 }
                 .buttonStyle(.plain)
                 Text("API key").font(.sbb(16, weight: .bold)).foregroundColor(.inkPrimary)
@@ -25,7 +28,10 @@ struct APIKeyEntryView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("API KEY").font(.sbb(10, weight: .bold)).foregroundColor(.inkSecondary).tracking(1)
                     HStack(spacing: 8) {
-                        Image("key").renderingMode(.template).foregroundColor(.inkSecondary)
+                        Image("key").renderingMode(.template)
+                            .resizable().aspectRatio(contentMode: .fit)
+                            .foregroundColor(.inkSecondary)
+                            .frame(width: 18, height: 18)
                         SecureField("", text: $key)
                             .textFieldStyle(.plain)
                             .font(.sbb(15))

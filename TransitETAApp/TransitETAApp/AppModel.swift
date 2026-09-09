@@ -11,6 +11,11 @@ final class AppModel: ObservableObject {
 
     init(config: Config = Config()) {
         self.config = config
+        // Eagerly, not from a view's .onAppear: MenuBarExtra(.window) builds
+        // its content lazily, so an .onAppear-driven start wouldn't fire
+        // until the user first opened the dropdown, leaving the menu bar
+        // stale from launch until that first click.
+        startTimer()
     }
 
     // Named differently from the free function `menuBarState(pin:...)` in
@@ -43,10 +48,12 @@ final class AppModel: ObservableObject {
     func refresh() async {
         guard config.apiKey != nil else {
             errorMessage = "No API key configured (set TRANSIT_ETA_API_KEY or use the menu)."
+            events = []
             return
         }
         guard config.stopRef != nil else {
             errorMessage = "No stop configured yet."
+            events = []
             return
         }
         do {

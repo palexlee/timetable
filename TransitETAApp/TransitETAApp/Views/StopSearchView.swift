@@ -11,7 +11,10 @@ struct StopSearchView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 10) {
                 Button(action: { isPresented = false }) {
-                    Image("chevron-left").renderingMode(.template).foregroundColor(Color(white: 0.29))
+                    Image("chevron-left").renderingMode(.template)
+                        .resizable().aspectRatio(contentMode: .fit)
+                        .foregroundColor(Color(white: 0.29))
+                        .frame(width: 18, height: 18)
                 }
                 .buttonStyle(.plain)
                 Text("Search stop").font(.sbb(16, weight: .bold)).foregroundColor(.inkPrimary)
@@ -19,7 +22,10 @@ struct StopSearchView: View {
             .padding(EdgeInsets(top: 14, leading: 16, bottom: 12, trailing: 16))
 
             HStack(spacing: 8) {
-                Image("magnifying-glass").renderingMode(.template).foregroundColor(.inkSecondary)
+                Image("magnifying-glass").renderingMode(.template)
+                    .resizable().aspectRatio(contentMode: .fit)
+                    .foregroundColor(.inkSecondary)
+                    .frame(width: 17, height: 17)
                 TextField("Stop name", text: $query)
                     .textFieldStyle(.plain)
                     .font(.sbb(15))
@@ -60,7 +66,10 @@ struct StopSearchView: View {
                     }
                 }) {
                     HStack(spacing: 12) {
-                        Image("station").renderingMode(.template).foregroundColor(Color(white: 0.29))
+                        Image("station").renderingMode(.template)
+                            .resizable().aspectRatio(contentMode: .fit)
+                            .foregroundColor(Color(white: 0.29))
+                            .frame(width: 20, height: 20)
                         Text(match.name)
                             .font(.sbb(15, weight: index == 0 ? .bold : .regular))
                             .foregroundColor(.inkPrimary)
