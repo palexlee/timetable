@@ -159,11 +159,11 @@ def main() -> None:
 
     try:
         events = ojp_client.next_departures(cfg, limit=5)
+        print(render.build_menu(SCRIPT_PATH, cfg, events))
     except OjpError as exc:
         print(render.error_menu(SCRIPT_PATH, cfg, str(exc)))
-        return
-
-    print(render.build_menu(SCRIPT_PATH, cfg, events))
+    except Exception as exc:  # noqa: BLE001 -- must never crash: SwiftBar reruns this every 10s
+        print(render.error_menu(SCRIPT_PATH, cfg, f"Unexpected error: {exc}"))
 
 
 if __name__ == "__main__":
