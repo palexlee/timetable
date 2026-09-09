@@ -2132,7 +2132,11 @@ struct StopSearchView: View {
                 TextField("Stop name", text: $query)
                     .textFieldStyle(.plain)
                     .font(.sbb(15))
-                    .onChange(of: query) { _, newValue in
+                    .onChange(of: query) { newValue in
+                        // Single-parameter closure: the two-parameter
+                        // (oldValue, newValue) onChange overload requires
+                        // macOS 14+; this project's deployment target is
+                        // macOS 13.0 (set in Task 1's project.yml).
                         searchTask?.cancel()
                         searchTask = Task {
                             try? await Task.sleep(nanoseconds: 250_000_000)
