@@ -195,10 +195,6 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 xcodebuild test \
   -project TransitETAApp.xcodeproj \
   -scheme TransitETAApp \
-  -destination 'platform=macOS' \
-  | xcbeautify 2>/dev/null || xcodebuild test \
-  -project TransitETAApp.xcodeproj \
-  -scheme TransitETAApp \
   -destination 'platform=macOS'
 ```
 
@@ -1635,7 +1631,12 @@ final class AppModel: ObservableObject {
     }
 
     var menuBarState: MenuBarState {
-        TransitETAApp.menuBarState(pin: config.pinned, stopName: config.stopName, events: events, now: Date())
+        // Unqualified call resolves to the free function, not this property:
+        // Swift distinguishes `model.menuBarState` (property access, no
+        // parens) from `menuBarState(pin:stopName:events:now:)` (a labeled
+        // function call) by call-site shape, so no module qualification
+        // or recursion risk here.
+        menuBarState(pin: config.pinned, stopName: config.stopName, events: events, now: Date())
     }
 
     func startTimer(interval: TimeInterval = 10) {
@@ -1700,7 +1701,7 @@ final class AppModel: ObservableObject {
 }
 ```
 
-Note the qualified call `TransitETAApp.menuBarState(...)` inside the computed property `menuBarState` — needed because the property and the free function share a name; the module-qualified call disambiguates. (`TransitETAApp` here is the module name, matching the Xcode target's product name from `project.yml`.)
+No module qualification is used for the `menuBarState(pin:stopName:events:now:)` call inside the `menuBarState` computed property — see the comment in the code above for why that's safe.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -1767,25 +1768,30 @@ Expected: `14`.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/TransitETAApp/Assets.xcassets"
 
-declare -A ICONS=(
-  [train-profile]=train-profile-medium
-  [tram-profile]=tram-profile-medium
-  [bus-profile]=bus-profile-medium
-  [underground-vehicule-profile]=underground-vehicule-profile-medium
-  [boat-profile]=boat-profile-medium
-  [cable-car-profile]=cable-car-profile-medium
-  [funicular-profile]=funicular-profile-medium
-  [station]=station-small
-  [magnifying-glass]=magnifying-glass-small
-  [key]=key-small
-  [circle-tick]=circle-tick-small
-  [circle-cross]=circle-cross-small
-  [chevron-left]=chevron-left-small
-  [platform]=platform-small
-)
+# name:source pairs, not an associative array -- the system /bin/bash on
+# macOS is 3.2 (pre-4.0, no `declare -A` support), so this must stay
+# compatible with plain indexed arrays / word-splitting.
+ICONS="
+train-profile:train-profile-medium
+tram-profile:tram-profile-medium
+bus-profile:bus-profile-medium
+underground-vehicule-profile:underground-vehicule-profile-medium
+boat-profile:boat-profile-medium
+cable-car-profile:cable-car-profile-medium
+funicular-profile:funicular-profile-medium
+station:station-small
+magnifying-glass:magnifying-glass-small
+key:key-small
+circle-tick:circle-tick-small
+circle-cross:circle-cross-small
+chevron-left:chevron-left-small
+platform:platform-small
+"
 
-for name in "${!ICONS[@]}"; do
-  src="/tmp/sbb-icon-import/${ICONS[$name]}.svg"
+for pair in $ICONS; do
+  name="${pair%%:*}"
+  source_name="${pair##*:}"
+  src="/tmp/sbb-icon-import/${source_name}.svg"
   dest_dir="${name}.imageset"
   mkdir -p "$dest_dir"
   cp "$src" "$dest_dir/${name}.svg"
@@ -2281,7 +2287,7 @@ struct TransitETAMenuBarApp: App {
 }
 ```
 
-Note the app struct is renamed from `TransitETAApp` (the Task 1 placeholder) to `TransitETAMenuBarApp` — the *type* name `TransitETAApp` would otherwise collide with the *module* name `TransitETAApp` used for the module-qualified call in `AppModel.swift` (`TransitETAApp.menuBarState(...)`).
+Note the app struct is renamed from `TransitETAApp` (the Task 1 placeholder) to `TransitETAMenuBarApp` — avoids a type sharing the exact name of its own module, which is confusing to read even though it doesn't cause a compile error here.
 
 - [ ] **Step 7: Build**
 
