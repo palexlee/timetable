@@ -33,9 +33,7 @@ targets:
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGNING_REQUIRED: "NO"
         SWIFT_VERSION: "5.9"
-    info:
-      path: Generated-Info.plist
-      properties: {}
+        GENERATE_INFOPLIST_FILE: "YES"
     dependencies:
       - target: TransitETAApp
 schemes:
