@@ -7,22 +7,31 @@ struct DeparturesView: View {
     @State private var showingAPIKey = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            Divider().overlay(Color.dividerLight)
-            content
-            Divider().overlay(Color.dividerLight)
-            footer
+        Group {
+            // In-place swap, not .sheet(): a sheet presented over
+            // MenuBarExtra(.window)'s borderless panel was confirmed (via
+            // live tracing) to sometimes leave the panel showing stale
+            // pixels after dismissal, even though the underlying view
+            // state had already updated correctly underneath. Swapping
+            // the content within the same window sidesteps that failure
+            // mode entirely -- there's no second window to desync from.
+            if showingSearch {
+                StopSearchView(model: model, isPresented: $showingSearch)
+            } else if showingAPIKey {
+                APIKeyEntryView(model: model, isPresented: $showingAPIKey)
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    header
+                    Divider().overlay(Color.dividerLight)
+                    content
+                    Divider().overlay(Color.dividerLight)
+                    footer
+                }
+                .frame(width: 320)
+            }
         }
-        .frame(width: 320)
         .background(Color.white)
         .preferredColorScheme(.light)
-        .sheet(isPresented: $showingSearch) {
-            StopSearchView(model: model, isPresented: $showingSearch)
-        }
-        .sheet(isPresented: $showingAPIKey) {
-            APIKeyEntryView(model: model, isPresented: $showingAPIKey)
-        }
     }
 
     @ViewBuilder
