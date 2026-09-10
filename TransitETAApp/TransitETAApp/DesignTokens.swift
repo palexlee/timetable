@@ -17,10 +17,13 @@ extension Font {
 }
 
 /// Approximate line-badge color by category, matching common Swiss rail
-/// conventions (IC/EC red, IR/RJ violet, RE green, S-Bahn blue) and mode
-/// for everything else. Not each line's exact official color -- that data
-/// (GTFS route_color) isn't in the OJP responses this app parses.
-func lineBadgeColor(mode: String, lineName: String) -> Color {
+/// conventions (IC/EC red, IR/RJ violet, RE green, S-Bahn blue) and the
+/// mode icon for everything else. Not each line's exact official color --
+/// that data (GTFS route_color) isn't in the OJP responses this app
+/// parses. Takes `iconName` (see `iconAssetName(forMode:)`) rather than
+/// the raw OJP mode string so both StopEvent (which has the raw mode) and
+/// MenuBarState (which only carries the derived icon name) can call it.
+func lineBadgeColor(iconName: String, lineName: String) -> Color {
     let name = lineName.trimmingCharacters(in: .whitespaces).uppercased()
     if name.hasPrefix("IC") || name.hasPrefix("EC") {
         return Color(red: 0xEB / 255, green: 0x00 / 255, blue: 0x00 / 255) // red
@@ -34,16 +37,16 @@ func lineBadgeColor(mode: String, lineName: String) -> Color {
     if name.hasPrefix("S"), let second = name.dropFirst().first, second.isNumber {
         return Color(red: 0x00 / 255, green: 0x5E / 255, blue: 0xA6 / 255) // blue
     }
-    switch mode.trimmingCharacters(in: .whitespaces).lowercased() {
-    case "bus", "coach":
+    switch iconName {
+    case "bus-profile":
         return Color(red: 0x6A / 255, green: 0x1B / 255, blue: 0x9A / 255) // violet
-    case "tram":
+    case "tram-profile":
         return Color(red: 0xE1 / 255, green: 0x5C / 255, blue: 0x00 / 255) // orange
-    case "metro", "underground":
+    case "underground-vehicule-profile":
         return Color(red: 0x00 / 255, green: 0x59 / 255, blue: 0x5C / 255) // teal
-    case "water":
+    case "boat-profile":
         return Color(red: 0x00 / 255, green: 0x6C / 255, blue: 0x9E / 255) // ferry blue
-    case "cableway", "funicular":
+    case "cable-car-profile", "funicular-profile":
         return Color(red: 0x5C / 255, green: 0x5C / 255, blue: 0x5C / 255) // gray
     default:
         return Color(red: 0x4A / 255, green: 0x4A / 255, blue: 0x4A / 255) // neutral gray

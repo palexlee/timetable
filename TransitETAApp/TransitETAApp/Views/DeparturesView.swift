@@ -117,7 +117,7 @@ private struct DepartureRow: View {
                             .foregroundColor(.white)
                             .padding(EdgeInsets(top: 2, leading: 6, bottom: 2, trailing: 6))
                             .frame(minWidth: 22)
-                            .background(lineBadgeColor(mode: event.mode, lineName: event.lineName))
+                            .background(lineBadgeColor(iconName: event.iconName, lineName: event.lineName))
                             .cornerRadius(4)
                         Text("→").font(.sbb(13)).foregroundColor(.inkSecondary)
                         Text(event.destination).font(.sbb(14)).foregroundColor(.inkPrimary).lineLimit(1)
