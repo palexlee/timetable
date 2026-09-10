@@ -112,7 +112,13 @@ private struct DepartureRow: View {
                     .frame(width: 24, height: 24)
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
-                        Text(event.lineName).font(.sbb(15, weight: .bold)).foregroundColor(.inkPrimary)
+                        Text(event.lineName)
+                            .font(.sbb(13, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(EdgeInsets(top: 2, leading: 6, bottom: 2, trailing: 6))
+                            .frame(minWidth: 22)
+                            .background(lineBadgeColor(mode: event.mode, lineName: event.lineName))
+                            .cornerRadius(4)
                         Text("→").font(.sbb(13)).foregroundColor(.inkSecondary)
                         Text(event.destination).font(.sbb(14)).foregroundColor(.inkPrimary).lineLimit(1)
                     }
