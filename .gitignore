@@ -8,3 +8,4 @@ config.json
 TransitETAApp/*.xcodeproj/xcuserdata/
 TransitETAApp/*.xcodeproj/project.xcworkspace/xcuserdata/
 TransitETAApp/DerivedData/
+.DS_Store
