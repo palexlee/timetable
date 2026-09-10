@@ -29,6 +29,7 @@ struct MenuBarLabel: View {
     private func icon(_ name: String) -> some View {
         Image(name).renderingMode(.template)
             .resizable().aspectRatio(contentMode: .fit)
-            .frame(width: 14, height: 14)
+            .frame(width: 13, height: 13)
+            .clipped()
     }
 }

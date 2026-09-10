@@ -15,6 +15,8 @@ struct DeparturesView: View {
             footer
         }
         .frame(width: 320)
+        .background(Color.white)
+        .preferredColorScheme(.light)
         .sheet(isPresented: $showingSearch) {
             StopSearchView(model: model, isPresented: $showingSearch)
         }

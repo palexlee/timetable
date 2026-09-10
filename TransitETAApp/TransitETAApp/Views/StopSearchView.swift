@@ -1,7 +1,12 @@
 import SwiftUI
 
 struct StopSearchView: View {
-    @ObservedObject var model: AppModel
+    // Not @ObservedObject: this view only calls methods on `model` (search,
+    // selectStop), it never reads AppModel's @Published state. Observing it
+    // reactively re-renders this whole sheet on every unrelated AppModel
+    // change -- including the background 10s refresh timer, which can land
+    // mid-tap and drop the gesture (the reported "sometimes doesn't work").
+    let model: AppModel
     @Binding var isPresented: Bool
     @State private var query = ""
     @State private var results: [StopMatch] = []
@@ -60,10 +65,11 @@ struct StopSearchView: View {
 
             ForEach(Array(results.enumerated()), id: \.element) { index, match in
                 Button(action: {
-                    Task {
-                        await model.selectStop(match)
-                        isPresented = false
-                    }
+                    // Dismiss immediately -- don't gate closing the sheet
+                    // behind the network round-trip inside selectStop(),
+                    // which can take seconds and made the sheet look stuck.
+                    isPresented = false
+                    Task { await model.selectStop(match) }
                 }) {
                     HStack(spacing: 12) {
                         Image("station").renderingMode(.template)
@@ -84,5 +90,7 @@ struct StopSearchView: View {
             }
         }
         .frame(width: 320)
+        .background(Color.white)
+        .preferredColorScheme(.light)
     }
 }

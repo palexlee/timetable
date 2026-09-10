@@ -1,7 +1,12 @@
 import SwiftUI
 
 struct APIKeyEntryView: View {
-    @ObservedObject var model: AppModel
+    // Not @ObservedObject: this view only calls model.setAPIKey(_:), it
+    // never reads AppModel's @Published state. Observing it reactively
+    // re-renders this whole sheet on every unrelated AppModel change --
+    // including the background 10s refresh timer, which can land mid-tap
+    // and make the Save button feel unresponsive.
+    let model: AppModel
     @Binding var isPresented: Bool
     @State private var key = ""
     @State private var errorMessage: String?
@@ -48,10 +53,13 @@ struct APIKeyEntryView: View {
 
                 HStack {
                     Spacer()
-                    Button("Cancel") { isPresented = false }
-                        .buttonStyle(.plain)
-                        .padding(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(white: 0.85)))
+                    Button(action: { isPresented = false }) {
+                        Text("Cancel")
+                            .padding(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(white: 0.85)))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                     Button(action: {
                         do {
                             try model.setAPIKey(key)
@@ -65,6 +73,7 @@ struct APIKeyEntryView: View {
                             .padding(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
                             .background(Color.sbbRed)
                             .cornerRadius(8)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -72,5 +81,7 @@ struct APIKeyEntryView: View {
             .padding(EdgeInsets(top: 0, leading: 16, bottom: 18, trailing: 16))
         }
         .frame(width: 320)
+        .background(Color.white)
+        .preferredColorScheme(.light)
     }
 }
