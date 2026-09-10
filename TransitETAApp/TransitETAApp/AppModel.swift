@@ -8,6 +8,14 @@ final class AppModel: ObservableObject {
     private(set) var config: Config
 
     private var timer: Timer?
+    // Guards against a stale in-flight refresh() overwriting a newer one's
+    // result: nextDepartures(config:) reads config.stopRef synchronously
+    // before its network await, so a request already in flight when the
+    // user changes stops is still for the OLD stop -- if that stale
+    // response resolves after the new stop's own refresh, it would
+    // silently clobber the fresh data with old-stop departures. Only the
+    // most recently *started* refresh is allowed to apply its result.
+    private var refreshGeneration = 0
 
     init(config: Config = Config()) {
         self.config = config
@@ -46,6 +54,9 @@ final class AppModel: ObservableObject {
     /// bad response must never take the whole loop down (the lesson from
     /// the Python plugin's xml_util.parse fix).
     func refresh() async {
+        refreshGeneration += 1
+        let generation = refreshGeneration
+
         guard config.apiKey != nil else {
             errorMessage = "No API key configured (set TRANSIT_ETA_API_KEY or use the menu)."
             events = []
@@ -57,11 +68,15 @@ final class AppModel: ObservableObject {
             return
         }
         do {
-            events = try await nextDepartures(config: config)
+            let fetched = try await nextDepartures(config: config)
+            guard generation == refreshGeneration else { return } // superseded by a newer refresh
+            events = fetched
             errorMessage = nil
         } catch let error as OjpError {
+            guard generation == refreshGeneration else { return }
             errorMessage = error.message
         } catch {
+            guard generation == refreshGeneration else { return }
             errorMessage = "Unexpected error: \(error.localizedDescription)"
         }
     }

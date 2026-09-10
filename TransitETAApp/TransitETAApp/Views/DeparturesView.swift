@@ -40,13 +40,23 @@ struct DeparturesView: View {
         } else {
             VStack(spacing: 0) {
                 ForEach(model.events.prefix(5), id: \.self) { event in
-                    DepartureRow(event: event, pin: model.config.pinned, now: Date()) {
+                    DepartureRow(event: event, isPinned: event == pinnedEvent, now: Date()) {
                         model.pin(event)
                     }
                     Divider().overlay(Color.dividerFaint)
                 }
             }
         }
+    }
+
+    // The one departure the menu bar title actually tracks: the soonest
+    // event matching the pin (same selection menuBarState() makes). A pin
+    // only records mode+line+destination, so several departures of the
+    // same line to the same destination at different times all match it --
+    // only the soonest one should show as pinned, not every match.
+    private var pinnedEvent: StopEvent? {
+        guard let pin = model.config.pinned else { return nil }
+        return model.events.first { $0.matchesPin(pin) }
     }
 
     private var header: some View {
@@ -97,11 +107,9 @@ struct DeparturesView: View {
 
 private struct DepartureRow: View {
     let event: StopEvent
-    let pin: Pin?
+    let isPinned: Bool
     let now: Date
     let onSelect: () -> Void
-
-    private var isPinned: Bool { event.matchesPin(pin) }
 
     var body: some View {
         Button(action: onSelect) {
