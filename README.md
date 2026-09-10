@@ -95,6 +95,34 @@ change if the API details differ slightly.
 6. Click a line/destination to pin it. The icon updates to show that
    route's live ETA; click **Unpin** to go back to just the stop name.
 
+## Native app (TransitETAApp/)
+
+A native SwiftUI menu bar app that replaces this SwiftBar plugin's plain
+dropdown with one styled after SBB's real departure boards (brand red,
+Helvetica Neue, real transport-mode pictograms from
+[sbb-design-systems/sbb-icons](https://github.com/sbb-design-systems/sbb-icons),
+Apache-2.0). Same feature set as the plugin above -- search a stop, see
+the next 5 departures, pin one line -- just a real native UI instead of
+SwiftBar's text-based menu format.
+
+See `docs/superpowers/specs/2026-09-09-transit-eta-native-app-design.md`
+for the full design. To run it: open `TransitETAApp/TransitETAApp.xcodeproj`
+in Xcode and press Run. It's ad-hoc signed (no Apple Developer account
+needed) -- if Xcode asks for a signing team the first time you run it,
+choose "Sign to Run Locally".
+
+Run its test suite with `TransitETAApp/run_tests.sh`. If `xcodebuild`/tests
+fail with a Command Line Tools error, ensure full Xcode is installed and set
+`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` (or open the
+project in Xcode directly, which doesn't need this). The suite writes a
+temporary entry to the login Keychain during `ConfigTests`/`AppModelTests`
+(service `local.transit-eta.tests`), cleaned up automatically by each test
+class's `tearDown`.
+
+This SwiftBar plugin isn't going away -- both can coexist, and the native
+app uses its own config file (`~/.config/transit-eta/native-config.json`,
+API key in the Keychain) so the two never step on each other.
+
 ## Running the tests
 
 ```

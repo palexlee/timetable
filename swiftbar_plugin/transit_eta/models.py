@@ -1,8 +1,13 @@
 """Data types shared by the OJP client and the menu renderer."""
 
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+
+
+def _norm(text: str) -> str:
+    return unicodedata.normalize("NFC", text)
 
 # OJP/SIRI PtMode values -> a glyph we can put straight in the menu bar
 # title (no image assets needed, renders correctly in light & dark mode).
@@ -65,10 +70,13 @@ class StopEvent:
         """Whether this event belongs to the same route+destination as ``pin``."""
         if not pin:
             return False
+        # macOS (SwiftBar's click args go through it) tends to hand back
+        # accented text as NFD, while the OJP API sends NFC -- same text,
+        # different codepoints, so compare normalized rather than raw.
         return (
             self.mode == pin.get("mode")
-            and self.line_name == pin.get("line_name")
-            and self.destination == pin.get("destination")
+            and _norm(self.line_name) == _norm(pin.get("line_name") or "")
+            and _norm(self.destination) == _norm(pin.get("destination") or "")
         )
 
 

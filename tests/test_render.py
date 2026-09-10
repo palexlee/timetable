@@ -29,7 +29,7 @@ class TitleForTest(unittest.TestCase):
             "pinned": {"mode": "rail", "line_name": "IC 1", "destination": "Genève"},
         }
         now = ic1.scheduled_time - timedelta(minutes=4)
-        self.assertEqual(render.title_for(cfg, self.events, now), "🚆IC 1 4′")
+        self.assertEqual(render.title_for(cfg, self.events, now), "🚆IC 1 → Genève 4′")
 
     def test_flags_delay_when_pinned_line_is_late(self):
         bus12 = next(e for e in self.events if e.line_name == "12")
@@ -38,7 +38,9 @@ class TitleForTest(unittest.TestCase):
             "pinned": {"mode": "bus", "line_name": "12", "destination": "Bern, Bahnhof"},
         }
         now = bus12.best_time - timedelta(minutes=2)
-        self.assertEqual(render.title_for(cfg, self.events, now), "🚌12 2′ (+3)")
+        self.assertEqual(
+            render.title_for(cfg, self.events, now), "🚌12 → Bern, Bahnhof 2′ (+3)"
+        )
 
     def test_falls_back_when_pinned_line_not_in_next_events(self):
         cfg = {
@@ -46,7 +48,7 @@ class TitleForTest(unittest.TestCase):
             "pinned": {"mode": "tram", "line_name": "99", "destination": "Nowhere"},
         }
         title = render.title_for(cfg, self.events, self.events[0].scheduled_time)
-        self.assertEqual(title, "🚊 99 –")
+        self.assertEqual(title, "🚊99 → Nowhere –")
 
 
 class BuildMenuTest(unittest.TestCase):
@@ -75,7 +77,11 @@ class BuildMenuTest(unittest.TestCase):
         menu = render.build_menu(
             "/path/to/plugin.py", cfg, self.events, now=self.events[0].scheduled_time
         )
-        pinned_line = next(l for l in menu.splitlines() if "Genève" in l)
+        # Look among the dropdown rows specifically, not the title line --
+        # the title also contains the pinned destination now.
+        pinned_line = next(
+            l for l in menu.splitlines() if "Genève" in l and "param1=select" in l
+        )
         self.assertTrue(pinned_line.startswith("✓ "))
 
 

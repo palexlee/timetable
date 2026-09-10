@@ -45,7 +45,7 @@ def build_stop_event_request(stop_ref: str, number_of_results: int) -> bytes:
         <siri:RequestTimestamp>{timestamp}</siri:RequestTimestamp>
         <Location>
           <PlaceRef>
-            <StopPointRef>{stop_ref}</StopPointRef>
+            <StopPlaceRef>{stop_ref}</StopPlaceRef>
           </PlaceRef>
           <DepArrTime>{timestamp}</DepArrTime>
         </Location>
@@ -85,6 +85,7 @@ def _parse_stop_event(node: Node) -> Optional[StopEvent]:
     mode = service.text_of("Mode", "PtMode") or ""
     line_name = (
         service.text_of("PublishedLineName", "Text")
+        or service.text_of("PublicCode")
         or service.text_of("LineRef")
         or "?"
     )

@@ -40,6 +40,11 @@ from transit_eta.ojp_http import OjpError
 SCRIPT_PATH = os.path.abspath(__file__)
 
 
+def _as_literal(text: str) -> str:
+    """Escape text for embedding in a double-quoted AppleScript string."""
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
+
+
 def _osascript(script: str) -> str:
     result = subprocess.run(
         ["osascript", "-e", script], capture_output=True, text=True
@@ -49,7 +54,7 @@ def _osascript(script: str) -> str:
 
 def _prompt_text(title: str, prompt: str) -> str:
     script = (
-        f'display dialog "{prompt}" default answer "" with title "{title}" '
+        f'display dialog "{_as_literal(prompt)}" default answer "" with title "{_as_literal(title)}" '
         'buttons {"Cancel", "OK"} default button "OK"\n'
         "text returned of result"
     )
@@ -58,7 +63,7 @@ def _prompt_text(title: str, prompt: str) -> str:
 
 def _prompt_password(title: str, prompt: str) -> str:
     script = (
-        f'display dialog "{prompt}" default answer "" with title "{title}" '
+        f'display dialog "{_as_literal(prompt)}" default answer "" with title "{_as_literal(title)}" '
         'with hidden answer buttons {"Cancel", "OK"} default button "OK"\n'
         "text returned of result"
     )
@@ -66,9 +71,9 @@ def _prompt_password(title: str, prompt: str) -> str:
 
 
 def _choose_from_list(title: str, options: list) -> str:
-    quoted = ", ".join(f'"{o}"' for o in options)
+    quoted = ", ".join(f'"{_as_literal(o)}"' for o in options)
     script = (
-        f'choose from list {{{quoted}}} with title "{title}" '
+        f'choose from list {{{quoted}}} with title "{_as_literal(title)}" '
         f'with prompt "Multiple stops match - pick one:"'
     )
     result = _osascript(script)
@@ -76,7 +81,9 @@ def _choose_from_list(title: str, options: list) -> str:
 
 
 def _notify(title: str, message: str) -> None:
-    _osascript(f'display notification "{message}" with title "{title}"')
+    _osascript(
+        f'display notification "{_as_literal(message)}" with title "{_as_literal(title)}"'
+    )
 
 
 def action_set_key() -> None:
@@ -152,11 +159,11 @@ def main() -> None:
 
     try:
         events = ojp_client.next_departures(cfg, limit=5)
+        print(render.build_menu(SCRIPT_PATH, cfg, events))
     except OjpError as exc:
         print(render.error_menu(SCRIPT_PATH, cfg, str(exc)))
-        return
-
-    print(render.build_menu(SCRIPT_PATH, cfg, events))
+    except Exception as exc:  # noqa: BLE001 -- must never crash: SwiftBar reruns this every 10s
+        print(render.error_menu(SCRIPT_PATH, cfg, f"Unexpected error: {exc}"))
 
 
 if __name__ == "__main__":

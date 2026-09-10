@@ -13,6 +13,8 @@ small menu bar tool.
 from typing import List, Optional
 from xml.etree import ElementTree as ET
 
+from .ojp_http import OjpError
+
 
 class Node:
     __slots__ = ("tag", "text", "children")
@@ -62,5 +64,13 @@ def _build(elem: ET.Element) -> Node:
 
 
 def parse(xml_bytes: bytes) -> Node:
-    root = ET.fromstring(xml_bytes)
+    # A degraded/outage response can come back with a 2xx status but a
+    # non-XML body (plain-text or HTML maintenance page, empty body, ...).
+    # Turn that into a normal OjpError here so every caller gets a clean
+    # error instead of an uncaught ParseError -- important since the main
+    # plugin script re-runs on a timer and must never crash outright.
+    try:
+        root = ET.fromstring(xml_bytes)
+    except ET.ParseError as exc:
+        raise OjpError(f"OJP API returned a non-XML response: {exc}") from exc
     return _build(root)

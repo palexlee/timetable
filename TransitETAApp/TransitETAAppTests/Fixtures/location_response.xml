@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OJP xmlns="http://www.vdv.de/ojp" xmlns:siri="http://www.siri.org.uk/siri" version="2.0">
+  <OJPResponse>
+    <siri:ServiceDelivery>
+      <siri:ResponseTimestamp>2026-09-08T12:00:00Z</siri:ResponseTimestamp>
+      <OJPLocationInformationDelivery>
+        <siri:ResponseTimestamp>2026-09-08T12:00:00Z</siri:ResponseTimestamp>
+        <siri:Status>true</siri:Status>
+        <PlaceResult>
+          <Place>
+            <StopPlace>
+              <StopPlaceRef>8507000</StopPlaceRef>
+              <StopPlaceName>
+                <Text>Bern</Text>
+              </StopPlaceName>
+            </StopPlace>
+            <Name>
+              <Text>Bern</Text>
+            </Name>
+          </Place>
+          <Complete>true</Complete>
+          <Probability>0.98</Probability>
+        </PlaceResult>
+        <PlaceResult>
+          <Place>
+            <StopPlace>
+              <StopPlaceRef>8507099</StopPlaceRef>
+              <StopPlaceName>
+                <Text>Bern, Bahnhof</Text>
+              </StopPlaceName>
+            </StopPlace>
+            <Name>
+              <Text>Bern, Bahnhof</Text>
+            </Name>
+          </Place>
+          <Complete>true</Complete>
+          <Probability>0.87</Probability>
+        </PlaceResult>
+      </OJPLocationInformationDelivery>
+    </siri:ServiceDelivery>
+  </OJPResponse>
+</OJP>
