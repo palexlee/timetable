@@ -85,10 +85,16 @@ final class AppModel: ObservableObject {
         try await searchStops(config: config, query: query)
     }
 
-    func selectStop(_ match: StopMatch) async {
+    // Synchronous on purpose: a caller that also dismisses UI right after
+    // (StopSearchView's row tap) needs the config change and the dismiss to
+    // land in the same render pass. Split from selectStop() below, whose
+    // `Task { await model.selectStop(match) }` call site let the dismiss's
+    // state change apply before the Task ever got to run this line --
+    // config.setStop() is not async, so there was never a reason for it to
+    // wait behind a Task in the first place.
+    func selectStop(_ match: StopMatch) {
         config.setStop(stopRef: match.stopRef, stopName: match.name)
         objectWillChange.send()
-        await refresh()
     }
 
     func pin(_ event: StopEvent) {

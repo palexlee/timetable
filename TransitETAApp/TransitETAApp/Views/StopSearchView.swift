@@ -65,11 +65,13 @@ struct StopSearchView: View {
 
             ForEach(Array(results.enumerated()), id: \.element) { index, match in
                 Button(action: {
-                    // Dismiss immediately -- don't gate closing the sheet
-                    // behind the network round-trip inside selectStop(),
-                    // which can take seconds and made the sheet look stuck.
+                    // selectStop() is synchronous (just updates config) so
+                    // it lands in the same render pass as the dismiss right
+                    // below it -- no race between "sheet closed" and "stop
+                    // name updated". Only the network refresh is deferred.
+                    model.selectStop(match)
                     isPresented = false
-                    Task { await model.selectStop(match) }
+                    Task { await model.refresh() }
                 }) {
                     HStack(spacing: 12) {
                         Image("station").renderingMode(.template)
